@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -11,12 +12,13 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { FormData, zipCodeSchema } from './schema'
 import { Button } from '@/components/ui/button'
 
 export function ZipCodeForm() {
   const searchParams = useSearchParams()
+  const { push } = useRouter()
   const {
     control,
     handleSubmit,
@@ -37,15 +39,15 @@ export function ZipCodeForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl">Busca CEP</CardTitle>
-        <CardDescription>
-          Digite o CEP para obter as informações do endereço.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <form onSubmit={handleSubmit(handleSetZipToSearchParams)}>
+    <form onSubmit={handleSubmit(handleSetZipToSearchParams)}>
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Busca CEP</CardTitle>
+          <CardDescription>
+            Digite o CEP para obter as informações do endereço.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="zipcode">CEP</Label>
             <Controller
@@ -64,10 +66,17 @@ export function ZipCodeForm() {
             {errors.zipCode && (
               <p className="text-red-500">{errors.zipCode.message}</p>
             )}
-            <Button type="submit">Buscar</Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+        </CardContent>
+        <CardFooter className="flex gap-2 justify-stretch">
+          <Button variant={'outline'} onClick={() => push('/app')}>
+            Consultar CEPs buscados
+          </Button>
+          <Button type="submit" className=" w-full">
+            Buscar
+          </Button>
+        </CardFooter>
+      </Card>
+    </form>
   )
 }

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card'
 import { AddressInfo } from './type'
 import { useSearchParams } from 'next/navigation'
-import { getAddressInfo } from '../search-zip-code/actions'
+import { getAddresses } from '../search-zip-code/actions'
 import Spinner from '@/components/ui/spinner'
 
 const AddressCard: React.FC = () => {
@@ -23,7 +23,7 @@ const AddressCard: React.FC = () => {
     setIsLoading(true)
     setError(false)
     if (zipCode) {
-      getAddressInfo(zipCode)
+      getAddresses(zipCode)
         .then(setAddress)
         .catch((error) => {
           console.error(error)
@@ -37,8 +37,6 @@ const AddressCard: React.FC = () => {
   }, [zipCode])
 
   if (!zipCode) return null
-
-  console.log(address)
 
   return (
     <Card className="w-full max-w-sm">
