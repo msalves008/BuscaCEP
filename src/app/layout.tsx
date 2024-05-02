@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme/theme-provider'
+import { ToggleTheme } from '@/components/theme/toggle-theme'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,6 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <header className="flex justify-between items-center  px-6 py-4 border-b border-border">
+          <strong>BuscaCEP</strong>
+          <ToggleTheme />
+        </header>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
