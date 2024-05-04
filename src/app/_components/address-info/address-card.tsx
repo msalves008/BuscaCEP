@@ -1,4 +1,3 @@
-'use client'
 import * as React from 'react'
 import {
   Card,
@@ -7,45 +6,25 @@ import {
   CardContent,
   CardDescription,
 } from '@/components/ui/card'
-import { AddressInfo } from './type'
-import { useSearchParams } from 'next/navigation'
 import { getAddresses } from '../search-zip-code/actions'
 import Spinner from '@/components/ui/spinner'
 
-const AddressCard: React.FC = () => {
-  const searchParams = useSearchParams()
-  const zipCode = searchParams.get('zipCode')
-  const [address, setAddress] = React.useState<AddressInfo | null>(null)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [error, setError] = React.useState<boolean>(false)
+interface AddressCardProps {
+  zipCode?: string
+}
 
-  React.useEffect(() => {
-    setIsLoading(true)
-    setError(false)
-    if (zipCode) {
-      getAddresses(zipCode)
-        .then(setAddress)
-        .catch((error) => {
-          console.error(error)
-          setAddress(null)
-          setError(true)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
-    }
-  }, [zipCode])
-
+const AddressCard = async ({ zipCode }: AddressCardProps) => {
   if (!zipCode) return null
 
+  const address = await getAddresses(zipCode)
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>Endereço</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading && <Spinner />}
-        {address && isLoading === false && (
+        {!address && <Spinner />}
+        {address && address?.status !== 404 && (
           <>
             <CardDescription>CEP: {address.cep}</CardDescription>
             <CardDescription>Logradouro: {address.street}</CardDescription>
@@ -54,9 +33,9 @@ const AddressCard: React.FC = () => {
             <CardDescription>Estado: {address.state}</CardDescription>
           </>
         )}
-        {error && (
+        {address?.status === 404 && (
           <CardDescription className="text-red-500 text-center">
-            Informe um CEP válido
+            CEP inválido ou inexistente em nossos registros
           </CardDescription>
         )}
       </CardContent>

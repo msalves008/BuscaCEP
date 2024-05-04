@@ -1,12 +1,18 @@
-import AddressCard from './_components/address-info/address-card'
+import AddressWrapper from './_components/address-info'
 import { ZipCodeForm } from './_components/search-zip-code/zip-code-form'
 
-export default function Home() {
+export default function Home({
+  searchParams,
+}: {
+  searchParams?: {
+    zipCode?: string
+  }
+}) {
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-center gap-4">
         <ZipCodeForm />
-        <AddressCard />
+        <AddressWrapper searchParams={searchParams} />
       </main>
     </>
   )

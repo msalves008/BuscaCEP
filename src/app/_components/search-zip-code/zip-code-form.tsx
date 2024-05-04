@@ -12,13 +12,14 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { FormData, zipCodeSchema } from './schema'
 import { Button } from '@/components/ui/button'
 
 export function ZipCodeForm() {
   const searchParams = useSearchParams()
-  const { push } = useRouter()
+  const pathname = usePathname()
+  const { replace } = useRouter()
   const {
     control,
     handleSubmit,
@@ -26,16 +27,18 @@ export function ZipCodeForm() {
   } = useForm<FormData>({
     resolver: zodResolver(zipCodeSchema),
     defaultValues: {
-      zipCode: searchParams.get('zipCode') ?? '',
+      zipCode: searchParams.get('zipCode')?.toString() ?? '',
     },
   })
 
   function handleSetZipToSearchParams(data: FormData) {
-    const query = new URLSearchParams({
-      zipCode: data.zipCode,
-    })
-
-    return window.history.pushState({}, '', `?${query.toString()}`)
+    const params = new URLSearchParams(searchParams)
+    if (data.zipCode) {
+      params.set('zipCode', data.zipCode)
+    } else {
+      params.delete('zipCode')
+    }
+    replace(`${pathname}?${params.toString()}`)
   }
 
   return (
@@ -49,13 +52,13 @@ export function ZipCodeForm() {
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="zipcode">CEP</Label>
+            <Label htmlFor="zipCode">CEP</Label>
             <Controller
               name="zipCode"
               control={control}
               render={({ field }) => (
                 <Input
-                  id="zipcode"
+                  id="zipCode"
                   type="text"
                   placeholder="00000-000"
                   maxLength={8}
@@ -69,9 +72,6 @@ export function ZipCodeForm() {
           </div>
         </CardContent>
         <CardFooter className="flex gap-2 justify-stretch">
-          <Button variant={'outline'} onClick={() => push('/app')}>
-            Consultar CEPs buscados
-          </Button>
           <Button type="submit" className=" w-full">
             Buscar
           </Button>
