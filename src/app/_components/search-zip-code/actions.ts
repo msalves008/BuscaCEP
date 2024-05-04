@@ -22,9 +22,7 @@ export const getAddresses = async (zipCode: string) => {
   }
 }
 
-export const getAddressFromExternalApi = async (
-  zipCode: string,
-): Promise<AddressInfo> => {
+export const getAddressFromExternalApi = async (zipCode: string) => {
   console.log('request in ExternalApi', zipCode)
   try {
     const response = await fetch(
@@ -46,9 +44,7 @@ export const getAddressFromExternalApi = async (
       street: data.street,
     }
   } catch (error) {
-    return Promise.reject(
-      new Error('Todos os serviços de CEP retornaram erro.'),
-    )
+    return { status: 404, message: 'CEP não encontrado.' }
   }
 }
 
